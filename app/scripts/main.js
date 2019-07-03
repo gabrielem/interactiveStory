@@ -1,16 +1,25 @@
 let prevScene = 0
 let currentScene = 0
 let bag = []
+const objects = {
+  'chiave': {'hint': 'serve una chiave', 'description': 'Una vecchia chiave arruginita', 'imageUrl': 'https://d27ucmmhxk51xv.cloudfront.net/media/english/illustration/key.jpg?version=1.1.88'}
+}
 const content = [
   {'title': 'Benvenuto!', 'text': 'Sei davanti ad un bivio dove vuoi andare?','imageUrl': 'http://fondazionetpe.it/wp-content/uploads/2018/04/super-1-960.jpg', 'paths':[
-    {'label': 'Vai a destra','index': 1},
-    {'label': 'Vai a sinistra','index': 2},
+    {'label': 'Vai a destra','index': 1}, //TODO make 1
+    {'label': 'Vai a sinistra','index': 3},
+  ]},
+  {'title': 'Prendi oggetto', 'text': 'bla bla','imageUrl': 'https://www.securitycagesdirect.co.uk/wp-content/uploads/2016/08/bzp-cage-2.jpg',
+  'object': 'chiave',
+  'paths':[
+    {'label': 'Muori','index': 3},
+    {'label': 'Avanti','index': 2},
   ]},
   {'title': 'Sceltga2', 'text': 'bla bla','imageUrl': 'https://upload.wikimedia.org/wikipedia/en/thumb/6/64/Arrow_Season_3.png/220px-Arrow_Season_3.png',
-  'objectRequired': {'name': 'chiave', 'hint': 'serve una chiave'},
+  'objectRequired': 'chiave',
   'paths':[
-    {'label': 'Muori','index': 2},
-    {'label': 'Vinci','index': 3},
+    {'label': 'Muori','index': 3},
+    {'label': 'Vinci','index': 4},
   ]},
   {'title': 'Sei morto!', 'text': 'morto..','imageUrl': 'https://cdn-images-1.medium.com/max/1600/1*ZSQNbk2PDP_JLewAjkVLmA.jpeg', 'paths':[
     {'label': 'Ricomincia','index': 0}
@@ -20,18 +29,31 @@ const content = [
   ]},
 
 ];
-
+function takeObj(ob) {
+  bag.push(ob)
+}
 function makeActionBtn(template, item) {
   let objConstraint = false
   let btns = ''
   let paths = item.paths
 
+  /*
+    Add object on the scene to offer the user to get.
+  */
+  if (item.object && bag.indexOf(item.object) == -1) {
+    const ob = objects[item.object]
+    template = template  + '<div class="object row"><div class="col-md-2"><img class="img-fluid" src="' +
+    ob.imageUrl + '" alt="" /></div><div class="col-md-10 text-left">' + ob.description +  ' <button class="takeObj" rel="' + item.object + '">prendi!</button></div></div>'
+  }
+
   if (item.objectRequired) {
     objConstraint = true
   }
-  if (objConstraint) {
+  if (objConstraint && bag.indexOf(item.objectRequired) == -1) {
     console.log('item', item);
-    template = template  + '<div>' + item.objectRequired.hint + '</div>'
+    console.log('objects', item.objectRequired, objects[item.objectRequired]);
+
+    template = template  + '<div>' + objects[item.objectRequired].hint + '</div>'
     template = template  + '<button type="button" onclick="goToScene(\'' + prevScene  +  '\')">torna indietro</button>'
   } else {
     console.log('paths', paths);
@@ -42,6 +64,8 @@ function makeActionBtn(template, item) {
     template = template  + '<div class="sceneBtns">' + btns + '</div>'
     console.log('___template', template);
   }
+
+
 
   return template
 }
@@ -65,4 +89,11 @@ function goToScene(index) {
 
 $( document ).ready(function() {
   start()
+  $(document).on('click', 'button.takeObj', function() {
+    var ob = $(this).attr('rel');
+    console.log('ob', ob);
+    takeObj(ob)
+    event.preventDefault();
+    });
+
 });

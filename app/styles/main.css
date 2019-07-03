@@ -85,3 +85,11 @@ body {
     border-bottom: 0;
   }
 }
+
+.object{
+  border:1px solid #afafaf;
+  background: #ffffff;
+  border-radius: 5px;
+  margin:10px;
+
+}
