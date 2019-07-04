@@ -23,14 +23,18 @@ const content = [
   ]},
   {'title': 'Sei morto!', 'text': 'morto..','imageUrl': 'https://cdn-images-1.medium.com/max/1600/1*ZSQNbk2PDP_JLewAjkVLmA.jpeg', 'paths':[
     {'label': 'Ricomincia','index': 0}
-  ]},
+  ],
+  'death': true
+  },
   {'title': 'Hai vinto!!', 'text': 'Vinto!','imageUrl': 'https://st2.depositphotos.com/1005979/9531/i/950/depositphotos_95312146-stock-photo-and-the-winner-is-gold.jpg', 'paths':[
     {'label': 'Ricomincia','index': 0}
-  ]},
+  ],
+  'end': true},
 
 ];
 function takeObj(ob) {
   bag.push(ob)
+  $("#ob_" + ob).hide()
 }
 function makeActionBtn(template, item) {
   let objConstraint = false
@@ -42,7 +46,7 @@ function makeActionBtn(template, item) {
   */
   if (item.object && bag.indexOf(item.object) == -1) {
     const ob = objects[item.object]
-    template = template  + '<div class="object row"><div class="col-md-2"><img class="img-fluid" src="' +
+    template = template  + '<div class="object row" id="ob_' + item.object + '"><div class="col-md-2"><img class="img-fluid" src="' +
     ob.imageUrl + '" alt="" /></div><div class="col-md-10 text-left">' + ob.description +  ' <button class="takeObj" rel="' + item.object + '">prendi!</button></div></div>'
   }
 
@@ -64,9 +68,6 @@ function makeActionBtn(template, item) {
     template = template  + '<div class="sceneBtns">' + btns + '</div>'
     console.log('___template', template);
   }
-
-
-
   return template
 }
 
@@ -74,8 +75,24 @@ function makeActionBtn(template, item) {
 function start() {
   goToScene(0)
 }
+function emptyTheBag() {
+  bag = []
+}
+function applayDeath() {
+  emptyTheBag()
+}
+function applayEnd() {
+  emptyTheBag()
+}
 
 function goToScene(index) {
+
+  if (content[index].death) {
+    applayDeath()
+  }
+  if (content[index].end) {
+    applayEnd()
+  }
   var template = $('#card-template').html();
   template = template.replace('_page_', index)
   template = template.replace('_title_', content[index].title)
